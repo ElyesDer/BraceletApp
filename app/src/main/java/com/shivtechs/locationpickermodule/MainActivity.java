@@ -7,14 +7,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.shivtechs.locationpickermodule.Adapters.WatchAdapter;
+import com.shivtechs.locationpickermodule.Models.Bracelet;
+import com.shivtechs.locationpickermodule.Models.ViewType;
+import com.shivtechs.locationpickermodule.ViewHolders.RowType;
 import com.shivtechs.maplocationpicker.LocationPickerActivity;
 import com.shivtechs.maplocationpicker.MapUtility;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener {
 
-    private TextView txtLatLong;
-    private TextView txtAddress;
+public class MainActivity extends Activity {
+
     private static final int ADDRESS_PICKER_REQUEST = 1020;
 
     @Override
@@ -22,19 +30,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MapUtility.apiKey = getResources().getString(R.string.api_key);
-        findViewById(R.id.btnAddressPicker).setOnClickListener(this);
-        txtLatLong = findViewById(R.id.txtLatLong);
-        txtAddress = findViewById(R.id.txtAddress);
-    }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnAddressPicker:
-                Intent intent = new Intent(MainActivity.this, LocationPickerActivity.class);
-                startActivityForResult(intent, ADDRESS_PICKER_REQUEST);
-                break;
-        }
+        List<RowType> bracelets = new ArrayList<>() ;
+        bracelets.add(new Bracelet(0, "Watch", "Rose", ViewType.v1));
+        bracelets.add(new Bracelet(0, "Watch", "Rose", ViewType.v2));
+        bracelets.add(new Bracelet(0, "Watch", "Rose", ViewType.v1));
+        bracelets.add(new Bracelet(0, "Watch", "Rose", ViewType.v2));
+        bracelets.add(new Bracelet(0, "Watch", "Rose", ViewType.v1));
+
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        WatchAdapter adapter = new WatchAdapter(bracelets);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
     }
 
     @Override
@@ -47,8 +57,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     String address = data.getStringExtra(MapUtility.ADDRESS);
                     double currentLatitude = data.getDoubleExtra(MapUtility.LATITUDE, 0.0);
                     double currentLongitude = data.getDoubleExtra(MapUtility.LONGITUDE, 0.0);
-                    txtAddress.setText("Address: "+address);
-                    txtLatLong.setText("Lat:"+currentLatitude+"  Long:"+currentLongitude);
 
                 }
             } catch (Exception ex) {
