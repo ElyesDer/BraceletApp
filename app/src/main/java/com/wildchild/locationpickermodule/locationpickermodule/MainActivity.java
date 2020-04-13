@@ -8,14 +8,14 @@ import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shivtechs.maplocationpicker.LocationPickerActivity;
+import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.WatchAdapter;
 import com.wildchild.locationpickermodule.locationpickermodule.Models.Bracelet;
 import com.wildchild.locationpickermodule.locationpickermodule.Models.ViewType;
-import com.shivtechs.locationpickermodule.R;
+
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RecyclerOnItemClickListener;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
-import com.shivtechs.maplocationpicker.MapUtility;
+import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtility;
 
 import java.util.ArrayList;
 import java.util.List;

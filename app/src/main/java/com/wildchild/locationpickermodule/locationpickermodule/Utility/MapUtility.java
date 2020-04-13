@@ -13,7 +13,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-package com.shivtechs.maplocationpicker;
+package com.wildchild.locationpickermodule.locationpickermodule.Utility;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -26,6 +26,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
+
+import com.wildchild.locationpickermodule.R;
+
 
 public class MapUtility {
     public static final String MAP_URL = "https://maps.googleapis.com";

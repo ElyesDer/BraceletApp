@@ -12,7 +12,7 @@
 //  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.shivtechs.maplocationpicker;
+package com.wildchild.locationpickermodule.locationpickermodule;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -69,11 +69,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import com.wildchild.locationpickermodule.R;
+import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtility;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -382,7 +384,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
                 mMap.clear();
                 imgSearch.setText("" + userAddress);
 
-                markerOptions = new MarkerOptions().position(coordinate).title(userAddress).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_red_800_24dp));
+                markerOptions = new MarkerOptions().position(coordinate).title(userAddress).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_red_800));
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinate, 14);
                 mMap.animateCamera(cameraUpdate);
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
