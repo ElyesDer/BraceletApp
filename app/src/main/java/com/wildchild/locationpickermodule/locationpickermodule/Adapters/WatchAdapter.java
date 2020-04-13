@@ -1,13 +1,12 @@
-package com.shivtechs.locationpickermodule.Adapters;
+package com.wildchild.locationpickermodule.locationpickermodule.Adapters;
 
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shivtechs.locationpickermodule.Models.Bracelet;
-import com.shivtechs.locationpickermodule.ViewHolders.RowType;
-import com.shivtechs.locationpickermodule.ViewHolders.WatchViewHolderFactory;
+import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RecyclerOnItemClickListener;
+import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
+import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
 import java.util.List;
 
@@ -15,8 +14,11 @@ public class WatchAdapter extends RecyclerView.Adapter {
 
     private List<RowType> dataSet;
 
-    public WatchAdapter(List<RowType> dataSet) {
+    RecyclerOnItemClickListener mItemClickListener;
+
+    public WatchAdapter(List<RowType> dataSet , RecyclerOnItemClickListener itemClickListener) {
         this.dataSet = dataSet;
+        this.mItemClickListener = itemClickListener;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class WatchAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return WatchViewHolderFactory.create(parent, viewType);
+        return WatchViewHolderFactory.create(parent, viewType , mItemClickListener);
     }
 
     @Override

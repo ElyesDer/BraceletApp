@@ -38,6 +38,8 @@ public class MapUtility {
     public static String LONGITUDE = "long";
 
 
+
+
     public static boolean isNetworkAvailable(Context context) {
         NetworkInfo activeNetworkInfo = null;
         try {

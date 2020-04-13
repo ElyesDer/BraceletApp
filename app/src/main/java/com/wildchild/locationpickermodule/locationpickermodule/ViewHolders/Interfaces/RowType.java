@@ -1,4 +1,4 @@
-package com.shivtechs.locationpickermodule.ViewHolders;
+package com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces;
 
 import androidx.recyclerview.widget.RecyclerView;
 

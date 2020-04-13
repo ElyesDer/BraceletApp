@@ -1,4 +1,4 @@
-package com.shivtechs.locationpickermodule;
+package com.wildchild.locationpickermodule.locationpickermodule;
 
 import android.content.Context;
 

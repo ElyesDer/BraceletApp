@@ -84,7 +84,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class LocationPickerActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class LocationPickerActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener
+{
     private static final int REQUEST_CHECK_SETTINGS = 2;
     private final String TAG = LocationPickerActivity.class.getSimpleName();
     private String userAddress = "";
@@ -384,6 +387,8 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
                 mMap.animateCamera(cameraUpdate);
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+                mMap.setOnMarkerClickListener(this);
+
                 Marker marker = mMap.addMarker(markerOptions);
                 marker.showInfoWindow();
             } catch (Exception ex) {
@@ -626,6 +631,12 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
             filterTaskList.add(asyncTask);
             asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, userAddress);
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        System.out.println("WHY IS THIS RETURNING SOMETHNG");
+        return false;
     }
 
     @SuppressLint("StaticFieldLeak")

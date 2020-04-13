@@ -1,9 +1,9 @@
-package com.shivtechs.locationpickermodule.Models;
+package com.wildchild.locationpickermodule.locationpickermodule.Models;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shivtechs.locationpickermodule.ViewHolders.RowType;
-import com.shivtechs.locationpickermodule.ViewHolders.WatchViewHolderFactory;
+import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
+import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
 public class Bracelet implements RowType {
     private int qr_id;
