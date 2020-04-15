@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Interfaces.CompletionHandler;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.Bracelet;
 
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.User;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.ViewType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RecyclerOnItemClickListener;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
@@ -23,6 +25,7 @@ import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtilit
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.prefs.Prefs;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,8 +94,18 @@ public class MainActivity extends Activity {
     }
 
     private void fetchWatchs(CompletionHandler<List<Bracelet>> completionHandler) {
+
+
+        @NonNull
+        String id = "";
+        if (User.currentUser != null) {
+            id = User.currentUser.getId();
+        }else{
+            id = Prefs.with(this).read("user_id");
+        }
+
         BraceletApiService apiService = RetrofitServiceProvider.getBraceletApiService();
-        apiService.getBracelets().enqueue(new Callback<List<Bracelet>>() {
+        apiService.getBracelets(id).enqueue(new Callback<List<Bracelet>>() {
             @Override
             public void onResponse(Call<List<Bracelet>> call, Response<List<Bracelet>> response) {
                 System.out.println("Response : " + response);

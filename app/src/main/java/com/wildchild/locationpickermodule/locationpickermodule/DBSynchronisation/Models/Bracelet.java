@@ -2,30 +2,33 @@ package com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisatio
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.annotations.SerializedName;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
 public class Bracelet implements RowType {
-    private int id_qr;
+
+    @SerializedName("_id")
+    private String id_qr;
     private String model;
     private String couleur;
     private int version;
     private ViewType viewType ;
 
-    public Bracelet(int id_qr, String model, String couleur, ViewType viewType) {
+    public Bracelet(String id_qr, String model, String couleur, ViewType viewType) {
         this.id_qr = id_qr;
         this.model = model;
         this.couleur = couleur;
         this.viewType = viewType;
     }
 
-    public Bracelet(int id_qr, String model, String couleur) {
+    public Bracelet(String id_qr, String model, String couleur) {
         this.id_qr = id_qr;
         this.model = model;
         this.couleur = couleur;
     }
 
-    public void setid_qr(int id_qr) {
+    public void setid_qr(String id_qr) {
         this.id_qr = id_qr;
     }
 
@@ -37,7 +40,7 @@ public class Bracelet implements RowType {
         this.couleur = couleur;
     }
 
-    public int getid_qr() {
+    public String getid_qr() {
         return id_qr;
     }
 

@@ -7,11 +7,11 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 
 public interface BraceletApiService {
-    @Retry
-    @GET("bracelets")
-    Call<List<Bracelet>> getBracelets();
+    @GET("/user/find/bracelet/{id}")
+    Call<List<Bracelet>> getBracelets(@Path("id") String id);
 
 }
