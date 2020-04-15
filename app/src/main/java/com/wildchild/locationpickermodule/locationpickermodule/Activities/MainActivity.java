@@ -1,4 +1,4 @@
-package com.wildchild.locationpickermodule.locationpickermodule;
+package com.wildchild.locationpickermodule.locationpickermodule.Activities;
 
 import android.app.Activity;
 import android.content.Intent;

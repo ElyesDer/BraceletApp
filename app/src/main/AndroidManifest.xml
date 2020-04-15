@@ -13,16 +13,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.wildchild.locationpickermodule.locationpickermodule.MainActivity">
+        <activity android:name="com.wildchild.locationpickermodule.locationpickermodule.Activities.MainActivity">
+
+        </activity>
+        <activity
+            android:name=".locationpickermodule.Activities.LocationPickerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".locationpickermodule.Activities.LoginActivity" />
+        <activity android:name=".locationpickermodule.Activities.SplashScreenActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".locationpickermodule.LocationPickerActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
