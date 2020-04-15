@@ -1,4 +1,4 @@
-package com.wildchild.locationpickermodule.locationpickermodule.Models;
+package com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models;
 
 import androidx.recyclerview.widget.RecyclerView;
 

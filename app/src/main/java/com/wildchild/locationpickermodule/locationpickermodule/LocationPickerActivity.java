@@ -96,8 +96,7 @@ import java.util.regex.Pattern;
 
 public class LocationPickerActivity extends AppCompatActivity implements
         OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener
-{
+        GoogleMap.OnMarkerClickListener {
     private static final int REQUEST_CHECK_SETTINGS = 2;
     private final String TAG = LocationPickerActivity.class.getSimpleName();
     private String userAddress = "";
@@ -145,7 +144,6 @@ public class LocationPickerActivity extends AppCompatActivity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(" ");
         }
-
 
 
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
@@ -201,7 +199,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
 
         bottomSheetTextView = (TextView) bottomSheet.findViewById(R.id.bottom_sheet_title);
-        WatchPagerAdapter adapter = new WatchPagerAdapter(this,mDrawables);
+        WatchPagerAdapter adapter = new WatchPagerAdapter(this, mDrawables);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
 
@@ -210,8 +208,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
         behavior.setCollapsible(true);
         behavior.setPeekHeight(100);
-        behavior.setAnchorPoint(100);
-
+        behavior.setAnchorPoint(500); // paralax pager size
 
 
         ImageView imgCurrentloc = findViewById(R.id.imgCurrentloc);
@@ -292,7 +289,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 if (!Places.isInitialized()) {
-                    Places.initialize(LocationPickerActivity.this.getApplicationContext(),MapUtility.apiKey);
+                    Places.initialize(LocationPickerActivity.this.getApplicationContext(), MapUtility.apiKey);
                 }
 
                 // Set the fields to specify which types of place data to return.
