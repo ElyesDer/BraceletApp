@@ -2,12 +2,15 @@ package com.wildchild.locationpickermodule.locationpickermodule.Adapters;
 
 import android.view.ViewGroup;
 
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.Bracelet;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RecyclerOnItemClickListener;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WatchAdapter extends RecyclerView.Adapter {
@@ -19,6 +22,14 @@ public class WatchAdapter extends RecyclerView.Adapter {
     public WatchAdapter(List<RowType> dataSet , RecyclerOnItemClickListener itemClickListener) {
         this.dataSet = dataSet;
         this.mItemClickListener = itemClickListener;
+    }
+
+    public void updateData(List<RowType> bracelets) {
+        dataSet.clear();
+        dataSet.addAll(bracelets);
+        System.out.println("aaaaaaaaaaaaa");
+        System.out.println(dataSet.size());
+        notifyDataSetChanged();
     }
 
     @Override

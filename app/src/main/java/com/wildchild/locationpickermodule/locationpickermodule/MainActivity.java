@@ -12,8 +12,10 @@ import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.WatchAdapter;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Factory.RetrofitServiceProvider;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Interfaces.BraceletApiService;
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Interfaces.CompletionHandler;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.Bracelet;
 
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.ViewType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RecyclerOnItemClickListener;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
 import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtility;
@@ -35,7 +37,7 @@ public class MainActivity extends Activity {
     RecyclerOnItemClickListener mItemClickListener = (childView, position) -> {
         System.out.println("Clicked On position " + position);
         Intent intent = new Intent(MainActivity.this, LocationPickerActivity.class);
-        intent.putExtra(MapUtility.ADDRESS,"Maranello");
+        intent.putExtra(MapUtility.ADDRESS, "Maranello");
         intent.putExtra(MapUtility.LATITUDE, "44.525551");
         intent.putExtra(MapUtility.LONGITUDE, "10.866320");
         startActivityForResult(intent, ADDRESS_PICKER_REQUEST);
@@ -54,26 +56,61 @@ public class MainActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        fetchWatchsAndUpdate();
+        fetchWatchs(new CompletionHandler<List<Bracelet>>() {
+            @Override
+            public void onSuccess(List<Bracelet> response) {
+                bracelets = populateData(response);
+                adapter.updateData(bracelets);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+        });
 
     }
 
-    private void fetchWatchsAndUpdate(){
+    private List<RowType> populateData(List<Bracelet> braceletList) {
+
+        List<RowType> rowTypeList = new ArrayList<>();
+        boolean tickTock = false;
+
+        for (Bracelet item : braceletList) {
+            if (tickTock) {
+                item.setItemViewType(ViewType.v1);
+                rowTypeList.add(item);
+            } else {
+                item.setItemViewType(ViewType.v2);
+                rowTypeList.add(item);
+            }
+            tickTock = !tickTock;
+        }
+
+        return rowTypeList;
+    }
+
+    private void fetchWatchs(CompletionHandler<List<Bracelet>> completionHandler) {
         BraceletApiService apiService = RetrofitServiceProvider.getBraceletApiService();
         apiService.getBracelets().enqueue(new Callback<List<Bracelet>>() {
-            @Override public void onResponse(Call<List<Bracelet>> call, Response<List<Bracelet>> response) {
-                System.out.println("Response : "+response);
+            @Override
+            public void onResponse(Call<List<Bracelet>> call, Response<List<Bracelet>> response) {
+                System.out.println("Response : " + response);
                 if (response.body() != null) {
                     Toast.makeText(getApplicationContext(), "Loaded watches " + response.body().size(),
                             Toast.LENGTH_LONG).show();
-                }else {
+                    completionHandler.onSuccess(response.body());
+                } else {
                     // handle error or empty
                 }
             }
-            @Override public void onFailure(Call<List<Bracelet>> call, Throwable t) {
-                System.out.println("Failure for error  : "+t.getMessage());
+
+            @Override
+            public void onFailure(Call<List<Bracelet>> call, Throwable t) {
+                System.out.println("Failure for error  : " + t.getMessage());
                 Toast.makeText(getApplicationContext(), "Failure " + t.getMessage(), Toast.LENGTH_LONG)
                         .show();
+                completionHandler.onFailure(t);
             }
         });
     }
