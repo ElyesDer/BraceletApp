@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private static final int ADDRESS_PICKER_REQUEST = 1020;
 
     List<RowType> bracelets = new ArrayList<>();
+    List<Bracelet> braceletsHolder = new ArrayList<>();
 
     RecyclerOnItemClickListener mItemClickListener = (childView, position) -> {
         System.out.println("Clicked On position " + position);
@@ -43,6 +44,8 @@ public class MainActivity extends Activity {
         intent.putExtra(MapUtility.ADDRESS, "Maranello");
         intent.putExtra(MapUtility.LATITUDE, "44.525551");
         intent.putExtra(MapUtility.LONGITUDE, "10.866320");
+
+        intent.putExtra("currentBracelet", braceletsHolder.get(position));
         startActivityForResult(intent, ADDRESS_PICKER_REQUEST);
     };
 
@@ -88,6 +91,8 @@ public class MainActivity extends Activity {
                 rowTypeList.add(item);
             }
             tickTock = !tickTock;
+
+            braceletsHolder.add(item);
         }
 
         return rowTypeList;
@@ -100,7 +105,7 @@ public class MainActivity extends Activity {
         String id = "";
         if (User.currentUser != null) {
             id = User.currentUser.getId();
-        }else{
+        } else {
             id = Prefs.with(this).read("user_id");
         }
 

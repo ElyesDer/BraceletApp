@@ -6,7 +6,9 @@ import com.google.gson.annotations.SerializedName;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
-public class Bracelet implements RowType {
+import java.io.Serializable;
+
+public class Bracelet implements RowType , Serializable {
 
     @SerializedName("_id")
     private String id_qr;

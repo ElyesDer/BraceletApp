@@ -27,7 +27,6 @@ public class WatchAdapter extends RecyclerView.Adapter {
     public void updateData(List<RowType> bracelets) {
         dataSet.clear();
         dataSet.addAll(bracelets);
-        System.out.println("aaaaaaaaaaaaa");
         System.out.println(dataSet.size());
         notifyDataSetChanged();
     }

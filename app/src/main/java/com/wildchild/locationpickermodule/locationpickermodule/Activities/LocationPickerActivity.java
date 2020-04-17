@@ -83,6 +83,11 @@ import com.mahc.custombottomsheetbehavior.MergedAppBarLayout;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior;
 import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.WatchPagerAdapter;
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Factory.RetrofitServiceProvider;
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Interfaces.BraceletApiService;
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Interfaces.CompletionHandler;
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.Bracelet;
+import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.History;
 import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtility;
 
 import java.io.IOException;
@@ -92,6 +97,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LocationPickerActivity extends AppCompatActivity implements
@@ -123,6 +132,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     TextView bottomSheetTextView;
 
+    private Bracelet currentBracelet;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +147,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
         if(getSupportActionBar()!=null)
             getSupportActionBar().hide();
             */
-
+/*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -144,6 +155,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(" ");
         }
+
+ */
 
 
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
@@ -269,6 +282,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
                 //temp -> get lat , log from db
                 mLatitude = getIntent().getDoubleExtra(MapUtility.LATITUDE, 0);
                 mLongitude = getIntent().getDoubleExtra(MapUtility.LONGITUDE, 0);
+
+                currentBracelet = (Bracelet) getIntent().getSerializableExtra("currentBracelet");
             }
         }
 
@@ -346,6 +361,46 @@ public class LocationPickerActivity extends AppCompatActivity implements
             }
         });
 
+        fetchWatchHistoriesWithID(new CompletionHandler<List<History>>() {
+            @Override
+            public void onSuccess(List<History> response) {
+                // update history tableview
+                for (History item : response){
+                    System.out.println(item.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+
+            }
+        });
+
+    }
+
+    void fetchWatchHistoriesWithID(CompletionHandler<List<History>> completionHandler) {
+        BraceletApiService apiService = RetrofitServiceProvider.getBraceletApiService();
+        apiService.getBraceletHistory(currentBracelet.getid_qr()).enqueue(new Callback<List<History>>() {
+            @Override
+            public void onResponse(Call<List<History>> call, Response<List<History>> response) {
+                System.out.println("Response : " + response);
+                if (response.body() != null) {
+                    Toast.makeText(getApplicationContext(), "Loaded watches " + response.body().size(),
+                            Toast.LENGTH_LONG).show();
+                    completionHandler.onSuccess(response.body());
+                } else {
+                    // handle error or empty
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<History>> call, Throwable t) {
+                System.out.println("Failure for error  : " + t.getMessage());
+                Toast.makeText(getApplicationContext(), "Failure " + t.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                completionHandler.onFailure(t);
+            }
+        });
     }
 
     @Override
