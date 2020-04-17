@@ -31,7 +31,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +85,7 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayout;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior;
 import com.wildchild.locationpickermodule.R;
+import com.wildchild.locationpickermodule.locationpickermodule.Adapters.HistoryAdapter;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.WatchPagerAdapter;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Factory.RetrofitServiceProvider;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Interfaces.BraceletApiService;
@@ -89,6 +93,7 @@ import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.Bracelet;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models.History;
 import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtility;
+import com.wildchild.locationpickermodule.locationpickermodule.Utility.Utilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -130,9 +135,20 @@ public class LocationPickerActivity extends AppCompatActivity implements
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
 
-    TextView bottomSheetTextView;
+    TextView bottomSheetTitle;
+    TextView bottomSheetSubTitle;
+    TextView bottomSheetTimer;
+
+    Button button1;
+    Button button2;
+    Button button3;
+
+    ListView bottomSheetHistoryList;
 
     private Bracelet currentBracelet;
+
+    private List<History> histories = new ArrayList<>();
+    private HistoryAdapter historiesAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -211,12 +227,27 @@ public class LocationPickerActivity extends AppCompatActivity implements
         };
 
 
-        bottomSheetTextView = (TextView) bottomSheet.findViewById(R.id.bottom_sheet_title);
+
+        View bottomSheetLayout = bottomSheet.findViewById(R.id.bottom_sheet_layout);
+
+        bottomSheetTitle = (TextView) bottomSheetLayout.findViewById(R.id.bottom_sheet_title);
+        bottomSheetTimer = (TextView) bottomSheetLayout.findViewById(R.id.bottomSheetTimer);
+        bottomSheetSubTitle = (TextView) bottomSheetLayout.findViewById(R.id.bottomSheetSubTitle);
+
+        bottomSheetHistoryList = (ListView) bottomSheetLayout.findViewById(R.id.history_list);
+
+
+// VIEW PAGER SETUP
         WatchPagerAdapter adapter = new WatchPagerAdapter(this, mDrawables);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
 
-
+        // LIST VIEW SETUP
+        historiesAdapter = new HistoryAdapter(this, this.histories);
+        bottomSheetHistoryList.setAdapter(historiesAdapter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            bottomSheetHistoryList.setNestedScrollingEnabled(false);
+        }
         behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
 
         behavior.setCollapsible(true);
@@ -287,6 +318,10 @@ public class LocationPickerActivity extends AppCompatActivity implements
             }
         }
 
+        if (currentBracelet != null) {
+            bottomSheetTitle.setText(currentBracelet.getmodel() != null ? currentBracelet.getmodel() : "No model name" );
+        }
+
         if (savedInstanceState != null) {
             mLatitude = savedInstanceState.getDouble("latitude");
             mLongitude = savedInstanceState.getDouble("longitude");
@@ -300,37 +335,31 @@ public class LocationPickerActivity extends AppCompatActivity implements
         }
 
 
-        imgSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!Places.isInitialized()) {
-                    Places.initialize(LocationPickerActivity.this.getApplicationContext(), MapUtility.apiKey);
-                }
-
-                // Set the fields to specify which types of place data to return.
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
-
-
-                // Start the autocomplete intent.
-                Intent intent = new Autocomplete.IntentBuilder(
-                        AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(LocationPickerActivity.this);
-                LocationPickerActivity.this.startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        imgSearch.setOnClickListener(view -> {
+            if (!Places.isInitialized()) {
+                Places.initialize(LocationPickerActivity.this.getApplicationContext(), MapUtility.apiKey);
             }
+
+            // Set the fields to specify which types of place data to return.
+            List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+
+
+            // Start the autocomplete intent.
+            Intent intent = new Autocomplete.IntentBuilder(
+                    AutocompleteActivityMode.FULLSCREEN, fields)
+                    .build(LocationPickerActivity.this);
+            LocationPickerActivity.this.startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
         });
 
-        txtSelectLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra(MapUtility.ADDRESS, imgSearch.getText().toString().trim());
-                intent.putExtra(MapUtility.LATITUDE, mLatitude);
-                intent.putExtra(MapUtility.LONGITUDE, mLongitude);
-                intent.putExtra("id", place_id);//if you want place id
-                intent.putExtra("url", place_url);//if you want place url
-                LocationPickerActivity.this.setResult(Activity.RESULT_OK, intent);
-                LocationPickerActivity.this.finish();
-            }
+        txtSelectLocation.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.putExtra(MapUtility.ADDRESS, imgSearch.getText().toString().trim());
+            intent.putExtra(MapUtility.LATITUDE, mLatitude);
+            intent.putExtra(MapUtility.LONGITUDE, mLongitude);
+            intent.putExtra("id", place_id);//if you want place id
+            intent.putExtra("url", place_url);//if you want place url
+            LocationPickerActivity.this.setResult(Activity.RESULT_OK, intent);
+            LocationPickerActivity.this.finish();
         });
 
         imgCurrentloc.setOnClickListener(new View.OnClickListener() {
@@ -364,10 +393,18 @@ public class LocationPickerActivity extends AppCompatActivity implements
         fetchWatchHistoriesWithID(new CompletionHandler<List<History>>() {
             @Override
             public void onSuccess(List<History> response) {
+                histories.clear();
+                histories.addAll(response);
+
                 // update history tableview
-                for (History item : response){
-                    System.out.println(item.toString());
-                }
+                historiesAdapter.notifyDataSetChanged();
+                // update view
+
+                System.out.println(histories.get(0).toString());
+                bottomSheetSubTitle.setText("Last known position :"+histories.get(0).getPlace());
+                bottomSheetTimer.setText(Utilities.getStringFromTimestamp(histories.get(0).getCreatedAt()));
+
+
             }
 
             @Override
@@ -781,6 +818,10 @@ public class LocationPickerActivity extends AppCompatActivity implements
     public boolean onMarkerClick(Marker marker) {
         System.out.println("WHY IS THIS RETURNING SOMETHNG");
         return false;
+    }
+
+    public void didTapButton1(View view) {
+
     }
 
     @SuppressLint("StaticFieldLeak")

@@ -31,7 +31,7 @@
                 android:textSize="19sp"/>
 
             <TextView
-                android:id="@+id/text_dummy1"
+                android:id="@+id/bottomSheetSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Text dummy 1234 1234"
@@ -39,17 +39,10 @@
                 android:textSize="12sp"
                 android:layout_marginTop="5dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Text dummy qwer asdf zxcv"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:layout_marginTop="5dp"/>
-
         </LinearLayout>
 
         <TextView
+            android:id="@+id/bottomSheetTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5 min"
@@ -74,7 +67,9 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:onClick="didTapButton1"
+            >
 
             <ImageButton
                 android:id="@+id/button1"
@@ -214,38 +209,31 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_marginEnd="16dp"
+        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="APACHE LICENSE"
             android:layout_gravity="center_vertical"
-            android:textSize="18sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:text="LOCATION HISTORY"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
     </FrameLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-
-        android:text="@string/dummy_text"
-        android:textSize="12sp"
-        android:textColor="@android:color/black"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="620dp"
-        android:background="@color/colorAccent"
-        android:layout_marginTop="40dp">
+        android:layout_height="500dp"
+        >
+    <ListView
+        android:id="@+id/history_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Your remaining content here"
-            android:textColor="@android:color/white" />
+        />
 
     </FrameLayout>
+
 </LinearLayout>

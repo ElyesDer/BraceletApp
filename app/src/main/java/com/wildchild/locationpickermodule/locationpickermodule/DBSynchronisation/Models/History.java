@@ -14,6 +14,14 @@ public class History {
     private String updatedAt;
     private String user;
 
+    public History(String id, String createdAt, String latitude, String longitude) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.place = place;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
