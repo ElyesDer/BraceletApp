@@ -41,9 +41,9 @@ public class MainActivity extends Activity {
     RecyclerOnItemClickListener mItemClickListener = (childView, position) -> {
         System.out.println("Clicked On position " + position);
         Intent intent = new Intent(MainActivity.this, LocationPickerActivity.class);
-        intent.putExtra(MapUtility.ADDRESS, "Maranello");
-        intent.putExtra(MapUtility.LATITUDE, "44.525551");
-        intent.putExtra(MapUtility.LONGITUDE, "10.866320");
+//        intent.putExtra(MapUtility.ADDRESS, "Maranello");
+//        intent.putExtra(MapUtility.LATITUDE, "44.525551");
+//        intent.putExtra(MapUtility.LONGITUDE, "10.866320");
 
         intent.putExtra("currentBracelet", braceletsHolder.get(position));
         startActivityForResult(intent, ADDRESS_PICKER_REQUEST);
@@ -71,6 +71,11 @@ public class MainActivity extends Activity {
 
             @Override
             public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void doFinally() {
 
             }
         });

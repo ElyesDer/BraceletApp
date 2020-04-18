@@ -70,6 +70,11 @@ public class LoginActivity extends AppCompatActivity {
                                     // do smthg w/ positive button
                                 }).show();
                     }
+
+                    @Override
+                    public void doFinally() {
+
+                    }
                 });
             }
 
@@ -83,6 +88,11 @@ public class LoginActivity extends AppCompatActivity {
                         (dialog, which) -> {
                             // do smthg w/ positive button
                         }).show();
+            }
+
+            @Override
+            public void doFinally() {
+
             }
         });
     }

@@ -5,4 +5,6 @@ import androidx.annotation.Nullable;
 public interface CompletionHandler<T> {
     void onSuccess(T response ); //, @Nullable String message
     void onFailure(Throwable e);
+
+    void doFinally();
 }

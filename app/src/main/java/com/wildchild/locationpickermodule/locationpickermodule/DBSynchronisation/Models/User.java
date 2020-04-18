@@ -9,13 +9,13 @@ public class User {
 
     @SerializedName("_id")
     private String id;
-    private Bracelet[] bracelets;
     private String createdAt;
     private String email;
     private String firstname;
     private String lastname;
     private String password;
     private boolean type;
+    private boolean verified;
 
     public static User currentUser;
 
@@ -30,14 +30,6 @@ public class User {
 
     public String getId() {
         return this.id;
-    }
-
-    public void setBracelets(Bracelet[] bracelets) {
-        this.bracelets = bracelets;
-    }
-
-    public Bracelet[] getBracelets() {
-        return this.bracelets;
     }
 
     public void setCreatedAt(String createdAt) {
@@ -113,7 +105,6 @@ public class User {
         JSONObject jsonBracelet = new JSONObject();
         try {
             jsonBracelet.put("_id", id);
-            jsonBracelet.put("bracelets", bracelets);
             jsonBracelet.put("createdAt", createdAt);
             jsonBracelet.put("email", email);
             jsonBracelet.put("firstname", firstname);
