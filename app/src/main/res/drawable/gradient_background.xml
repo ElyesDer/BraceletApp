@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
-        android:startColor="@color/deep_purple_500"
-        android:endColor="@color/purple_500"
+        android:startColor="@color/quantum_black_secondary_text"
+        android:endColor="@color/common_google_signin_btn_text_dark_disabled"
         android:angle="0"/>
 </shape>

@@ -3,28 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    android:gravity="center"
+    android:gravity="bottom"
     android:orientation="vertical"
     android:padding="40dp">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="100dp"
-        android:src="@drawable/googleg_standard_color_18" />
+        android:src="@drawable/v4"
+        android:layout_gravity="center"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:textColorHint="#cccccc">
+        android:textColorHint="#cccccc"
+        >
+
+        <!--            android:drawableStart="@drawable/pwd"-->
 
         <EditText
             android:id="@+id/email_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#ffff"
-            android:drawableStart="@drawable/googleg_standard_color_18"
-            android:hint="   Email"
+            android:hint="Email"
             android:inputType="textPersonName"
             android:textColor="#cccccc"
             android:textSize="20sp" />
@@ -37,13 +41,14 @@
         android:layout_marginTop="10dp"
         android:textColorHint="#cccccc">
 
+<!--        android:drawableStart="@drawable/login"-->
+
         <EditText
             android:id="@+id/password_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#ffff"
-            android:drawableStart="@drawable/googleg_standard_color_18"
-            android:hint="   Passwoard"
+            android:hint="Passwoard"
             android:inputType="textPassword"
             android:textColor="#cccccc"
             android:textSize="20sp" />
@@ -62,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:background="#79a209df"
+        android:background="@drawable/gradient_background"
         android:text="Log In"
         android:textColor="#cccccc"
         android:onClick="didPressLogin"

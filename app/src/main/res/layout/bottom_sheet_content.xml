@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_sheet_peek_height"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/view_bottom_rounded_corner"
         android:paddingTop="8dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -27,15 +27,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Title dummy"
-                android:textColor="@android:color/white"
-                android:textSize="19sp"/>
+                android:textSize="19sp"
+                android:textColor="?attr/textColor"
+                />
 
             <TextView
                 android:id="@+id/bottomSheetSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Text dummy 1234 1234"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/metaTextColor"
                 android:textSize="12sp"
                 android:layout_marginTop="5dp"/>
 
@@ -46,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5 min"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/metaTextColor"
             android:textSize="14sp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"

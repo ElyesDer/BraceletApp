@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_constraint_layoutv2"
     android:layout_width="match_parent"
-    android:layout_height="130dp">
+    android:layout_height="130dp"
+    android:background="@drawable/recycle_rounded_corner"
+    >
 
     <TextView
         android:id="@+id/textViewV2"
@@ -21,7 +23,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="textEnd"
-        android:gravity="end" />
+        android:gravity="end"
+        android:textColor="?attr/metaTextColor"
+        />
 
     <ImageView
         android:id="@+id/imageViewV2"
@@ -35,6 +39,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@drawable/v3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
