@@ -78,14 +78,20 @@
                 android:layout_height="60dp"
                 android:src="@android:drawable/ic_dialog_map"
                 android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="didTapButton1"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BUTTON 1"
+                android:text="Locate"
+                android:layout_centerInParent="true"
                 android:textColor="@android:color/black"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentBottom="true"
+                android:onClick="didTapButton1"
+
+                />
         </RelativeLayout>
 
 
@@ -109,6 +115,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="BUTTON 2"
+                android:layout_centerInParent="true"
+
                 android:textColor="@android:color/black"/>
         </LinearLayout>
 
@@ -127,7 +135,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BUTTON 3"
+                android:text="Unpair"
+                android:layout_centerInParent="true"
+
                 android:textColor="@android:color/black"
                 android:layout_alignParentBottom="true"/>
         </RelativeLayout>

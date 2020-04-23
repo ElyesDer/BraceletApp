@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.thekhaeng.recyclerviewmargin.LayoutMarginDecoration;
 import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.WatchAdapter;
 import com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Database.Factory.RetrofitServiceProvider;
@@ -60,12 +61,15 @@ public class MainActivity extends Activity {
         WatchAdapter adapter = new WatchAdapter(bracelets, mItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new LayoutMarginDecoration(1, 2));
         recyclerView.setAdapter(adapter);
 
         fetchWatchs(new CompletionHandler<List<Bracelet>>() {
             @Override
             public void onSuccess(List<Bracelet> response) {
                 bracelets = populateData(response);
+
+                System.out.println(response.get(0).toString());
                 adapter.updateData(bracelets);
             }
 

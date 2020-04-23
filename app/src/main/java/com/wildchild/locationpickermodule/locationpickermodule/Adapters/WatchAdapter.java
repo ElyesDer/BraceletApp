@@ -27,7 +27,6 @@ public class WatchAdapter extends RecyclerView.Adapter {
     public void updateData(List<RowType> bracelets) {
         dataSet.clear();
         dataSet.addAll(bracelets);
-        System.out.println(dataSet.size());
         notifyDataSetChanged();
     }
 
@@ -43,7 +42,6 @@ public class WatchAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        System.out.println("CREATTTTIN "+dataSet.get(position).getItemViewType());
         dataSet.get(position).onBindViewHolder(holder);
     }
 

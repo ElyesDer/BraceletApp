@@ -25,14 +25,34 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your wearables"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="?attr/metaTextColor"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
 
-            />
+            android:text="Your wearables"
+            android:textColor="?attr/metaTextColor"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/contextMenu"
+            android:layout_width="51dp"
+            android:layout_height="35dp"
+            android:layout_alignTop="@+id/textView"
+            android:layout_alignBottom="@+id/textView"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="0dp"
+
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="-3dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:tint="?attr/metaTextColor" />
 
         <TextView
             android:id="@+id/textView2"
@@ -56,9 +76,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="358dp"
-        android:layout_height="438dp"
-        android:layout_marginTop="2dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

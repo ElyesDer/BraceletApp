@@ -1,9 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-    </style>
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
+<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--    </style>-->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -16,7 +16,7 @@
         <item name="textColor">#000000</item>
         <item name="metaTextColor">#606060</item>
         <item name="bgColor">#ffffff</item>
-        <item name="recycleItemColor">#F4EFBC</item>
+        <item name="recycleItemColor">#eceff1</item>
 
     </style>
 

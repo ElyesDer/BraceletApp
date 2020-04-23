@@ -92,6 +92,8 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                System.out.println("FAILED TO LOAD USER with ");
+                System.out.println(t.getMessage());
                 Toast.makeText(getApplicationContext(), "Failure " + t.getMessage(), Toast.LENGTH_LONG)
                         .show();
                 System.out.println(t.getStackTrace());

@@ -1,21 +1,46 @@
 package com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisation.Models;
 
+import android.app.Application;
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.annotations.SerializedName;
+import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
 import java.io.Serializable;
 
-public class Bracelet implements RowType , Serializable {
+enum Versions {
+    @SerializedName("1")
+    v1,
+    @SerializedName("2")
+    v2,
+    @SerializedName("3")
+    v3
+}
+
+public class Bracelet implements RowType, Serializable {
 
     @SerializedName("_id")
     private String id_qr;
     private String model;
     private String couleur;
-    private int version;
-    private ViewType viewType ;
+
+    public Versions getVersion() {
+        return version;
+    }
+
+    public void setVersion(Versions version) {
+        this.version = version;
+    }
+
+    private Versions version;
+    private ViewType viewType;
 
     public Bracelet(String id_qr, String model, String couleur, ViewType viewType) {
         this.id_qr = id_qr;
@@ -54,14 +79,20 @@ public class Bracelet implements RowType , Serializable {
         return couleur;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "Bracelet : ID " + getid_qr() + " Model : " + getmodel() + " VERSION : " + getVersion().name();
+    }
+
     @Override
     public int getItemViewType() {
-        switch (this.viewType){
-            case v1:
-            {
+        switch (this.viewType) {
+            case v1: {
                 return 0;
             }
-            case v2: return 1;
+            case v2:
+                return 1;
         }
         return 0;
     }
@@ -71,18 +102,41 @@ public class Bracelet implements RowType , Serializable {
         this.viewType = v;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder) {
-        switch (this.viewType){
+        switch (this.viewType) {
             case v1: {
                 WatchViewHolderFactory.WatchViewHolderV1 textViewHolder = (WatchViewHolderFactory.WatchViewHolderV1) viewHolder;
                 textViewHolder.textView.setText(this.model);
+                switch (version) {
+                    case v1: {
+                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v1));
+                        break;
+                    }
+                    case v2: {
+                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v3));
+                        break;
+                    }
+                }
                 break;
             }
 
             case v2: {
                 WatchViewHolderFactory.WatchViewHolderV2 textViewHolder = (WatchViewHolderFactory.WatchViewHolderV2) viewHolder;
                 textViewHolder.textView.setText(this.model);
+
+                switch (version) {
+                    case v1: {
+                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v1));
+                        break;
+                    }
+                    case v2: {
+                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v3));
+                        break;
+                    }
+                }
+
                 break;
             }
         }
