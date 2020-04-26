@@ -391,6 +391,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
                 startLocationUpdates();
 
             }
+
         }
     }
 
