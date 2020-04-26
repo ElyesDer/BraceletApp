@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.wildchild.locationpickermodule"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -52,5 +52,7 @@ dependencies {
     implementation ('com.github.thekhaeng:recycler-margin:1.2.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+
+    implementation 'com.budiyev.android:code-scanner:2.1.0'
 
 }

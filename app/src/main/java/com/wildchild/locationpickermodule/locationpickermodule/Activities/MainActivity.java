@@ -3,6 +3,11 @@ package com.wildchild.locationpickermodule.locationpickermodule.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,12 +37,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
 
     private static final int ADDRESS_PICKER_REQUEST = 1020;
 
     List<RowType> bracelets = new ArrayList<>();
     List<Bracelet> braceletsHolder = new ArrayList<>();
+
+    ImageButton contextMenu;
 
     RecyclerOnItemClickListener mItemClickListener = (childView, position) -> {
         System.out.println("Clicked On position " + position);
@@ -57,12 +64,15 @@ public class MainActivity extends Activity {
         MapUtility.apiKey = getResources().getString(R.string.api_key);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        contextMenu = findViewById(R.id.contextMenu);
 
         WatchAdapter adapter = new WatchAdapter(bracelets, mItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new LayoutMarginDecoration(1, 2));
         recyclerView.setAdapter(adapter);
+
+        contextMenu.setOnClickListener(this::showPopup);
 
         fetchWatchs(new CompletionHandler<List<Bracelet>>() {
             @Override
@@ -84,6 +94,15 @@ public class MainActivity extends Activity {
             }
         });
 
+    }
+
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_dashboard, popup.getMenu());
+        popup.show();
     }
 
     private List<RowType> populateData(List<Bracelet> braceletList) {
@@ -157,6 +176,23 @@ public class MainActivity extends Activity {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.pair_new_device:
+                intent = new Intent(this, CodeScannerActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.disconnect:
+                intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return false;
         }
     }
 }
