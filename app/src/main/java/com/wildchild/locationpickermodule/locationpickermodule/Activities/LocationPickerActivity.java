@@ -16,15 +16,20 @@ package com.wildchild.locationpickermodule.locationpickermodule.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,27 +59,15 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
 
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayout;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior;
+import com.wildchild.locationpickermodule.BuildConfig;
 import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.HistoryAdapter;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.WatchPagerAdapter;
@@ -87,6 +80,18 @@ import com.wildchild.locationpickermodule.locationpickermodule.Utility.MapUtilit
 import com.wildchild.locationpickermodule.locationpickermodule.Utility.Utilities;
 import com.wildchild.locationpickermodule.locationpickermodule.Utility.directionhelpers.FetchURL;
 import com.wildchild.locationpickermodule.locationpickermodule.Utility.directionhelpers.TaskLoadedCallback;
+import com.wildchild.locationpickermodule.locationpickermodule.Utility.models.LatLng;
+
+import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.OSRMRoadManager;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -119,14 +124,15 @@ class LocationType {
 }
 
 public class LocationPickerActivity extends AppCompatActivity implements
-        OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, TaskLoadedCallback {
+//        OnMapReadyCallback,
+//        GoogleMap.OnMarkerClickListener,
+        TaskLoadedCallback {
     private static final int REQUEST_CHECK_SETTINGS = 2;
     private final String TAG = LocationPickerActivity.class.getSimpleName();
     private String userAddress = "";
     private String place_id = "";
     private String place_url = " ";
-    private GoogleMap mMap;
+    private MapView map = null;
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 2;
     private boolean mLocationPermissionGranted;
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -153,7 +159,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     private Bracelet currentBracelet;
     private History currentPosition;
-    private MarkerOptions currentPositionOnMap;
+    private Marker currentPositionOnMap;
 
 
     // owener current loc
@@ -170,6 +176,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
     private BottomSheetBehaviorGoogleMapsLike<View> behavior;
     private Polyline currentPolyLine;
 
+    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -309,10 +316,26 @@ public class LocationPickerActivity extends AppCompatActivity implements
         //Prepare for Request for current location
         getLocationRequest();
 
-        // Try to obtain the map from the SupportMapFragment.
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        //if you want to open the location on the LocationPickerActivity through intent
+//        // Try to obtain the map from the SupportMapFragment.
+//        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+//        //if you want to open the location on the LocationPickerActivity through intent
+
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+
+        map = (MapView) findViewById(R.id.map);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+
+        configureMapView();
+
+        requestPermissionsIfNecessary(new String[]{
+                // if you need to show the current location, uncomment the line below
+                // Manifest.permission.ACCESS_FINE_LOCATION,
+                // WRITE_EXTERNAL_STORAGE is required in order to show the map
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        });
 
 
         if (!MapUtility.isNetworkAvailable(this)) {
@@ -409,9 +432,10 @@ public class LocationPickerActivity extends AppCompatActivity implements
             }
         });
 
+
         bottomSheetHistoryList.setOnItemClickListener((parent, view, position, id) -> {
             History history = histories.get(position);
-            didTapHistoryWith(new LatLng(
+            didTapHistoryWith(new GeoPoint(
                     Double.parseDouble(history.getLatitude()),
                     Double.parseDouble(history.getLongitude())
             ), history.getCreatedAt());
@@ -419,17 +443,63 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     }
 
+    private void configureMapView() {
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+
+        map.setMaxZoomLevel(20.0);
+        IMapController mapController = map.getController();
+        mapController.setZoom(9.5);
+        GeoPoint startPoint = new GeoPoint(48.8583, 2.2944);
+        mapController.setCenter(startPoint);
+    }
+
     private void didTapDirectUserToLocation() {
         // from user's position
         // show poly from user location to brace (mLat, current lat )
-        String url = getUrl(
-                new LatLng(this.mLatitude, this.mLongitude),
-                new LatLng(this.currentLatitude, this.currentLongitude),
-                "driving"
+//        String url = getUrl(
+//                new LatLng(this.mLatitude, this.mLongitude),
+//                new LatLng(this.currentLatitude, this.currentLongitude),
+//                "driving"
+//        );
+//        new FetchURL(LocationPickerActivity.this).execute(
+//                url, "driving"
+//        );
+
+        addTurnByTurn(
+                new GeoPoint(this.mLatitude, this.mLongitude),
+                new GeoPoint(this.currentLatitude, this.currentLongitude)
         );
-        new FetchURL(LocationPickerActivity.this).execute(
-                url, "driving"
-        );
+
+    }
+
+    private void addTurnByTurn(GeoPoint from, GeoPoint to) {
+
+//        map.invalidate();
+
+        new Thread(() -> {
+
+            RoadManager roadManager = new OSRMRoadManager(LocationPickerActivity.this);
+
+            ArrayList<GeoPoint> waypoints = new ArrayList<>();
+            waypoints.add(from);
+            waypoints.add(to);
+
+            Road road = roadManager.getRoad(waypoints);
+
+            roadManager.addRequestOption("routeType=fastest");
+            Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
+            map.getOverlays().add(roadOverlay);
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    map.invalidate();
+                }
+            });
+        }).start();
+
+
     }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
@@ -450,17 +520,17 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     @Override
     public void onTaskDone(Object... values) {
-        if (currentPolyLine != null)
-            currentPolyLine.remove();
-        currentPolyLine = mMap.addPolyline((PolylineOptions) values[0]);
+//        if (currentPolyLine != null)
+//            currentPolyLine.
+//        currentPolyLine = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
-    private void didTapHistoryWith(LatLng latLng, String locatedAt) {
+    private void didTapHistoryWith(GeoPoint latLng, String locatedAt) {
         //mMap.clear();
 
         // Update class field location
-        this.currentLatitude = latLng.latitude;
-        this.currentLongitude = latLng.longitude;
+        this.currentLatitude = latLng.getLatitude();
+        this.currentLongitude = latLng.getLongitude();
 
         showLocationOnMap(latLng, new LocationType(ELocationType.history, locatedAt));
 
@@ -468,7 +538,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
     }
 
     public void didTapButton1(View view) {
-        mMap.clear();
+//        mMap.clear();
 
 //        currentPositionOnMap = new MarkerOptions()
 //                .position(new LatLng(Double.parseDouble(this.currentPosition.getLatitude()), Double.parseDouble(this.currentPosition.getLongitude())))
@@ -485,21 +555,24 @@ public class LocationPickerActivity extends AppCompatActivity implements
 //        Marker marker1 = mMap.addMarker(currentPositionOnMap);
 //        Marker marker2 = mMap.addMarker(currentUserLocation);
         // Update class field location
-        this.currentLatitude = Double.parseDouble(this.currentPosition.getLatitude());
-        this.currentLongitude = Double.parseDouble(this.currentPosition.getLongitude());
+        if (this.currentPosition.getLatitude() != null && this.currentPosition.getLongitude() != null) {
+            this.currentLatitude = Double.parseDouble(this.currentPosition.getLatitude());
+            this.currentLongitude = Double.parseDouble(this.currentPosition.getLongitude());
 
-        showLocationOnMap(
-                new LatLng(Double.parseDouble(this.currentPosition.getLatitude()),
-                        Double.parseDouble(this.currentPosition.getLongitude())),
-                new LocationType(ELocationType.current)
-        );
-        showLocationOnMap(new LatLng(mLatitude, mLongitude), new LocationType(ELocationType.owner));
+            showLocationOnMap(
+                    new GeoPoint(Double.parseDouble(this.currentPosition.getLatitude()),
+                            Double.parseDouble(this.currentPosition.getLongitude())),
+                    new LocationType(ELocationType.current)
+            );
+            showLocationOnMap(new GeoPoint(mLatitude, mLongitude), new LocationType(ELocationType.owner));
 
 //        getAdressByGeocodingLatLng(marker1, Double.parseDouble(this.currentPosition.getLatitude()), Double.parseDouble(this.currentPosition.getLongitude()));
 //        getAdressByGeocodingLatLng(marker2, mLatitude, mLongitude);
 
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
-
+            behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
+        } else {
+            System.err.println("Null lat long");
+        }
 
     }
 
@@ -531,6 +604,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
+        map.onPause();
         try {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         } catch (NullPointerException ne) {
@@ -542,40 +616,40 @@ public class LocationPickerActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //after a place is searched
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                userAddress = place.getAddress();
-//                imgSearch.setText("" + userAddress);
-                mLatitude = place.getLatLng().latitude;
-                mLongitude = place.getLatLng().longitude;
-                place_id = place.getId();
-                place_url = String.valueOf(place.getWebsiteUri());
-
-                //addMarker();
-
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-            }
-        } else if (requestCode == REQUEST_CHECK_SETTINGS) {
-            //after location switch on dialog shown
-            if (resultCode != RESULT_OK) {
-                //Location not switched ON
-                Toast.makeText(LocationPickerActivity.this, "Location Not Available..", Toast.LENGTH_SHORT).show();
-
-            } else {
-                // Start location request listener.
-                //Location will be received onLocationResult()
-                //Once loc recvd, updateListener will be turned OFF.
-                Toast.makeText(this, "Fetching Location...", Toast.LENGTH_LONG).show();
-                startLocationUpdates();
-
-            }
-        }
+//        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK) {
+//                Place place = Autocomplete.getPlaceFromIntent(data);
+//                userAddress = place.getAddress();
+////                imgSearch.setText("" + userAddress);
+//                mLatitude = place.getLatLng().latitude;
+//                mLongitude = place.getLatLng().longitude;
+//                place_id = place.getId();
+//                place_url = String.valueOf(place.getWebsiteUri());
+//
+//                //addMarker();
+//
+//            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+//                // TODO: Handle the error.
+//                Status status = Autocomplete.getStatusFromIntent(data);
+//                Log.i(TAG, status.getStatusMessage());
+//            } else if (resultCode == RESULT_CANCELED) {
+//                // The user canceled the operation.
+//            }
+//        } else if (requestCode == REQUEST_CHECK_SETTINGS) {
+//            //after location switch on dialog shown
+//            if (resultCode != RESULT_OK) {
+//                //Location not switched ON
+//                Toast.makeText(LocationPickerActivity.this, "Location Not Available..", Toast.LENGTH_SHORT).show();
+//
+//            } else {
+//                // Start location request listener.
+//                //Location will be received onLocationResult()
+//                //Once loc recvd, updateListener will be turned OFF.
+//                Toast.makeText(this, "Fetching Location...", Toast.LENGTH_LONG).show();
+//                startLocationUpdates();
+//
+//            }
+//        }
     }
 
     private boolean checkAndRequestPermissions() {
@@ -600,7 +674,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     }
 
-    private void showLocationOnMap(LatLng latLng, LocationType locationType) {
+    private void showLocationOnMap(GeoPoint latLng, LocationType locationType) {
         if (checkAndRequestPermissions()) {
             getAddressByGeoCodingLatLng(latLng, locationType);
         }
@@ -617,14 +691,15 @@ public class LocationPickerActivity extends AppCompatActivity implements
                 public void onSuccess(Location location) {
                     if (location != null) {
                         if (clear) {
-                            mMap.clear();
+//                            map.clear();
                         }
                         //Go to User Current Location
                         mLatitude = location.getLatitude();
                         mLongitude = location.getLongitude();
-                        LocationPickerActivity.this.getAddressByGeoCodingLatLng(new LatLng(
-                                mLatitude, mLongitude
-                        ), new LocationType(ELocationType.owner));
+                        LocationPickerActivity.this.getAddressByGeoCodingLatLng(
+                                new GeoPoint(
+                                        mLatitude, mLongitude
+                                ), new LocationType(ELocationType.owner));
 
                     } else {
                         //Gps not enabled if loc is null
@@ -644,10 +719,11 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     }
 
-    private void addMarker(LatLng latLng, String address, LocationType locationType) {
+    private void addMarker(GeoPoint latLng, String address, LocationType locationType) {
 
-        if (mMap != null) {
-            MarkerOptions markerOptions;
+        if (map != null) {
+
+//            MarkerOptions markerOptions;
             try {
                 String preAddress = "";
                 switch (locationType.locationType) {
@@ -662,18 +738,26 @@ public class LocationPickerActivity extends AppCompatActivity implements
                         break;
                 }
 
-                markerOptions = new MarkerOptions()
-                        .position(latLng)
-                        .title(address);
-                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_red_800));
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
-                mMap.animateCamera(cameraUpdate);
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                Marker startMarker = new Marker(map);
+                startMarker.setPosition(latLng);
+                startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                map.getOverlays().add(startMarker);
 
-                mMap.setOnMarkerClickListener(this);
+                startMarker.setTitle(address);
+                map.invalidate();
+                map.getController().setCenter(latLng);
+//                markerOptions = new MarkerOptions()
+//                        .position(latLng)
+//                        .title(address);
+//                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_red_800));
+//                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
+//                mMap.animateCamera(cameraUpdate);
+//                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//
+//                mMap.setOnMarkerClickListener(this);
 
-                Marker marker = mMap.addMarker(markerOptions);
-                marker.showInfoWindow();
+//                Marker marker = mMap.addMarker(markerOptions);
+//                marker.showInfoWindow();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -682,64 +766,64 @@ public class LocationPickerActivity extends AppCompatActivity implements
     }
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        System.out.println("LOGGING - on Map REady");
-        mMap = googleMap;
-        mMap.clear();
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        if (mMap.isIndoorEnabled()) {
-            mMap.setIndoorEnabled(false);
-        }
-
-
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            // Use default InfoWindow frame
-            @Override
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            // Defines the contents of the InfoWindow
-            @Override
-            public View getInfoContents(Marker arg0) {
-                View v = getLayoutInflater().inflate(R.layout.info_window_layout, null);
-
-                // Getting the position from the marker
-                LatLng latLng = arg0.getPosition();
-                mLatitude = latLng.latitude;
-                mLongitude = latLng.longitude;
-                TextView tvLat = v.findViewById(R.id.address);
-                tvLat.setText(arg0.getTitle());
-                return v;
-
-            }
-        });
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-
-        // Setting a click event handler for the map
-//        mMap.setOnMapClickListener(latLng -> {
-//            mMap.clear();
-//            mLatitude = latLng.latitude;
-//            mLongitude = latLng.longitude;
-//            Log.e("latlng", latLng + "");
-//            LocationPickerActivity.this.addMarker(new LatLng(mLatitude, mLongitude), "");
-//            if (!MapUtility.isNetworkAvailable(LocationPickerActivity.this)) {
-//                MapUtility.showToast(LocationPickerActivity.this, "Please Connect to Internet");
-//            }
-//            LocationPickerActivity.this.getAddressByGeoCodingLatLng(latLng);
+//    @Override
+//    public void onMapReady(GoogleMap googleMap) {
+//        System.out.println("LOGGING - on Map REady");
+//        mMap = googleMap;
+//        mMap.clear();
+//        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//        mMap.getUiSettings().setMapToolbarEnabled(false);
+//        if (mMap.isIndoorEnabled()) {
+//            mMap.setIndoorEnabled(false);
+//        }
 //
+//
+//        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//
+//            // Use default InfoWindow frame
+//            @Override
+//            public View getInfoWindow(Marker arg0) {
+//                return null;
+//            }
+//
+//            // Defines the contents of the InfoWindow
+//            @Override
+//            public View getInfoContents(Marker arg0) {
+//                View v = getLayoutInflater().inflate(R.layout.info_window_layout, null);
+//
+//                // Getting the position from the marker
+//                LatLng latLng = arg0.getPosition();
+//                mLatitude = latLng.latitude;
+//                mLongitude = latLng.longitude;
+//                TextView tvLat = v.findViewById(R.id.address);
+//                tvLat.setText(arg0.getTitle());
+//                return v;
+//
+//            }
 //        });
-
-        if (checkAndRequestPermissions()) {
-            //startParsingAddressToShow();
-        } else {
-            doAfterPermissionProvided = 1;
-        }
-
-    }
+//        mMap.getUiSettings().setZoomControlsEnabled(true);
+//
+//        // Setting a click event handler for the map
+////        mMap.setOnMapClickListener(latLng -> {
+////            mMap.clear();
+////            mLatitude = latLng.latitude;
+////            mLongitude = latLng.longitude;
+////            Log.e("latlng", latLng + "");
+////            LocationPickerActivity.this.addMarker(new LatLng(mLatitude, mLongitude), "");
+////            if (!MapUtility.isNetworkAvailable(LocationPickerActivity.this)) {
+////                MapUtility.showToast(LocationPickerActivity.this, "Please Connect to Internet");
+////            }
+////            LocationPickerActivity.this.getAddressByGeoCodingLatLng(latLng);
+////
+////        });
+//
+//        if (checkAndRequestPermissions()) {
+//            //startParsingAddressToShow();
+//        } else {
+//            doAfterPermissionProvided = 1;
+//        }
+//
+//    }
 
     private void getSettingsLocation() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -869,16 +953,16 @@ public class LocationPickerActivity extends AppCompatActivity implements
         finish();
     }
 
-    private void getAddressByGeoCodingLatLng(LatLng latLng, LocationType locationType) {
+    private void getAddressByGeoCodingLatLng(GeoPoint latLng, LocationType locationType) {
 
         //Get string address by geo coding from lat long
-        if (latLng.latitude != 0 && latLng.longitude != 0) {
+        if (latLng.getLatitude() != 0 && latLng.getLongitude() != 0) {
 
             if (MapUtility.popupWindow != null && MapUtility.popupWindow.isShowing()) {
                 MapUtility.hideProgress();
             }
 
-            Log.d(TAG, "getAddressByGeoCodingLatLng: START" + latLng.latitude + " -- " + latLng.longitude);
+            Log.d(TAG, "getAddressByGeoCodingLatLng: START" + latLng.getLatitude() + " -- " + latLng.getLongitude());
             //Cancel previous tasks and launch this one
             for (AsyncTask prevTask : filterTaskList) {
                 //prevTask.cancel(true);
@@ -887,7 +971,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
             filterTaskList.clear();
             GetAddressFromLatLng asyncTask = new GetAddressFromLatLng(locationType);
             filterTaskList.add(asyncTask);
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, latLng.latitude, latLng.longitude);
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, latLng.getLatitude(), latLng.getLongitude());
         }
     }
 
@@ -912,12 +996,6 @@ public class LocationPickerActivity extends AppCompatActivity implements
 //            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLatitude, mLongitude);
 //        }
 //    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        System.out.println("WHY IS THIS RETURNING SOMETHNG");
-        return false;
-    }
 
 
     @SuppressLint("StaticFieldLeak")
@@ -992,7 +1070,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
             super.onPostExecute(stringAddress);
             LocationPickerActivity.this.userAddress = stringAddress;
             MapUtility.hideProgress();
-            addMarker(new LatLng(latitude, longitude), stringAddress, locationType);
+            addMarker(new GeoPoint(latitude, longitude), stringAddress, locationType);
         }
     }
 
@@ -1029,6 +1107,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        map.onResume();
         //Do tasks for which permission was granted by user in onRequestPermission()
         if (!isFinishing() && mLocationPermissionGranted) {
             // perform action required b4 asking permission
@@ -1076,6 +1155,38 @@ public class LocationPickerActivity extends AppCompatActivity implements
         userLocationRequest.setInterval(10000);
         userLocationRequest.setFastestInterval(3000);
         userLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        ArrayList<String> permissionsToRequest = new ArrayList<>();
+//        for (int i = 0; i < grantResults.length; i++) {
+//            permissionsToRequest.add(permissions[i]);
+//        }
+//        if (permissionsToRequest.size() > 0) {
+//            ActivityCompat.requestPermissions(
+//                    this,
+//                    permissionsToRequest.toArray(new String[0]),
+//                    REQUEST_PERMISSIONS_REQUEST_CODE);
+//        }
+//    }
+
+    private void requestPermissionsIfNecessary(String[] permissions) {
+        ArrayList<String> permissionsToRequest = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                permissionsToRequest.add(permission);
+            }
+        }
+        if (permissionsToRequest.size() > 0) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    permissionsToRequest.toArray(new String[0]),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
     }
 
 }

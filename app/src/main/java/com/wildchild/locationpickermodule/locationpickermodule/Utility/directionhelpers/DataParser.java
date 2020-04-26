@@ -1,6 +1,6 @@
 package com.wildchild.locationpickermodule.locationpickermodule.Utility.directionhelpers;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.wildchild.locationpickermodule.locationpickermodule.Utility.models.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
