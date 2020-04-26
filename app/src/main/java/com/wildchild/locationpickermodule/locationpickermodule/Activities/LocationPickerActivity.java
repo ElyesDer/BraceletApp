@@ -491,6 +491,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
             Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
             map.getOverlays().add(roadOverlay);
 
+
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
