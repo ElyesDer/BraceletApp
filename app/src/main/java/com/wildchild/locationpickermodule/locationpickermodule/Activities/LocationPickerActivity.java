@@ -46,6 +46,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.common.api.ApiException;
@@ -248,6 +249,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
                 switch (newState) {
                     case BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED:
                         Log.d("bottomsheet-", "STATE_COLLAPSED");
+                        bottomSheet.post(() -> ((NestedScrollView) bottomSheet).fullScroll(bottomSheet.FOCUS_UP));
                         break;
                     case BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING:
                         Log.d("bottomsheet-", "STATE_DRAGGING");
@@ -257,9 +259,13 @@ public class LocationPickerActivity extends AppCompatActivity implements
                         break;
                     case BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT:
                         Log.d("bottomsheet-", "STATE_ANCHOR_POINT");
+                        bottomSheet.post(() -> ((NestedScrollView) bottomSheet).fullScroll(bottomSheet.FOCUS_UP));
+
                         break;
                     case BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN:
                         Log.d("bottomsheet-", "STATE_HIDDEN");
+                        bottomSheet.post(() -> ((NestedScrollView) bottomSheet).fullScroll(bottomSheet.FOCUS_UP));
+
                         break;
                     default:
                         Log.d("bottomsheet-", "STATE_SETTLING");
@@ -417,6 +423,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
                     bottomSheetSubTitle.setText("Last known position :" + currentPosition.getPlace());
                     bottomSheetTimer.setText(Utilities.getStringFromTimestamp(currentPosition.getCreatedAt()));
+
+                    initWithCurrentPosition();
                 }
 
             }
@@ -443,6 +451,19 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     }
 
+    private void initWithCurrentPosition() {
+        if (this.currentPosition != null) {
+            this.currentLatitude = Double.parseDouble(this.currentPosition.getLatitude());
+            this.currentLongitude = Double.parseDouble(this.currentPosition.getLongitude());
+
+            showLocationOnMap(
+                    new GeoPoint(Double.parseDouble(this.currentPosition.getLatitude()),
+                            Double.parseDouble(this.currentPosition.getLongitude())),
+                    new LocationType(ELocationType.current)
+            );
+        }
+    }
+
     private void configureMapView() {
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
@@ -454,18 +475,12 @@ public class LocationPickerActivity extends AppCompatActivity implements
         mapController.setCenter(startPoint);
     }
 
-    private void didTapDirectUserToLocation() {
-        // from user's position
-        // show poly from user location to brace (mLat, current lat )
-//        String url = getUrl(
-//                new LatLng(this.mLatitude, this.mLongitude),
-//                new LatLng(this.currentLatitude, this.currentLongitude),
-//                "driving"
-//        );
-//        new FetchURL(LocationPickerActivity.this).execute(
-//                url, "driving"
-//        );
+    private void clearMap() {
+        map.getOverlays().clear();
+        map.invalidate();
+    }
 
+    private void didTapDirectUserToLocation() {
         addTurnByTurn(
                 new GeoPoint(this.mLatitude, this.mLongitude),
                 new GeoPoint(this.currentLatitude, this.currentLongitude)
@@ -474,9 +489,6 @@ public class LocationPickerActivity extends AppCompatActivity implements
     }
 
     private void addTurnByTurn(GeoPoint from, GeoPoint to) {
-
-//        map.invalidate();
-
         new Thread(() -> {
 
             RoadManager roadManager = new OSRMRoadManager(LocationPickerActivity.this);
@@ -503,22 +515,6 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     }
 
-    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
-        // Origin of route
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        // Destination of route
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        // Mode
-        String mode = "mode=" + directionMode;
-        // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
-        // Output format
-        String output = "json";
-        // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.api_key);
-        return url;
-    }
-
     @Override
     public void onTaskDone(Object... values) {
 //        if (currentPolyLine != null)
@@ -528,6 +524,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     private void didTapHistoryWith(GeoPoint latLng, String locatedAt) {
         //mMap.clear();
+
+        clearMap();
 
         // Update class field location
         this.currentLatitude = latLng.getLatitude();
@@ -541,6 +539,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
     public void didTapButton1(View view) {
 //        mMap.clear();
 
+        clearMap();
 //        currentPositionOnMap = new MarkerOptions()
 //                .position(new LatLng(Double.parseDouble(this.currentPosition.getLatitude()), Double.parseDouble(this.currentPosition.getLongitude())))
 //                .title(User.currentUser.getFirstname() + "'s" +
@@ -556,7 +555,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 //        Marker marker1 = mMap.addMarker(currentPositionOnMap);
 //        Marker marker2 = mMap.addMarker(currentUserLocation);
         // Update class field location
-        if (this.currentPosition.getLatitude() != null && this.currentPosition.getLongitude() != null) {
+        if (this.currentPosition != null && this.currentPosition != null) {
             this.currentLatitude = Double.parseDouble(this.currentPosition.getLatitude());
             this.currentLongitude = Double.parseDouble(this.currentPosition.getLongitude());
 
@@ -693,6 +692,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
                     if (location != null) {
                         if (clear) {
 //                            map.clear();
+                            clearMap();
                         }
                         //Go to User Current Location
                         mLatitude = location.getLatitude();

@@ -30,6 +30,16 @@ public class Bracelet implements RowType, Serializable {
     private String id_qr;
     private String model;
     private String couleur;
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
 
     public Versions getVersion() {
         return version;

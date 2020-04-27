@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,6 +12,20 @@
     android:paddingTop="8dp">
 
     <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bracelet Model"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/v4" />
+
+    <TextView
         android:id="@+id/result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +34,7 @@
         android:maxLines="5"
         android:textColor="#ff333333"
         android:textSize="15sp"
-        tools:text="Scan result"/>
+        tools:text="Are you sure you want to associate this watch to your account ?" />
 
     <TextView
         android:id="@+id/format"
@@ -29,9 +44,9 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif"
         android:maxLines="2"
-        android:textColor="#ff777777"
+        android:textColor="@color/cyan_500"
         android:textSize="15sp"
-        tools:text="Code format"/>
+        tools:text="Couldn't pair with this bracelet, make sure it is not linked to another person to proceed."/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,18 +56,22 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/copy"
+            android:id="@+id/confirmButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Copy"
-            tools:ignore="ButtonStyle"/>
+            android:textColor="@color/colorPrimaryDark"
+            android:text="Pair"
+            tools:ignore="ButtonStyle" />
+
 
         <Button
             android:id="@+id/close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Close"
-            tools:ignore="ButtonStyle"/>
+            android:text="@android:string/cancel"
+            tools:ignore="ButtonStyle" />
+
+
     </LinearLayout>
 </LinearLayout>

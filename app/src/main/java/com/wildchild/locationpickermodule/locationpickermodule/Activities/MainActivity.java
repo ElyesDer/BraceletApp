@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements PopupMenu.OnMenuItemClickL
         WatchAdapter adapter = new WatchAdapter(bracelets, mItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new LayoutMarginDecoration(1, 2));
+        recyclerView.addItemDecoration(new LayoutMarginDecoration(1, 18));
         recyclerView.setAdapter(adapter);
 
         contextMenu.setOnClickListener(this::showPopup);
