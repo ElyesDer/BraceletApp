@@ -3,6 +3,8 @@ package com.wildchild.locationpickermodule.locationpickermodule.DBSynchronisatio
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 enum Versions {
     @SerializedName("1")
     v1,
@@ -12,7 +14,7 @@ enum Versions {
     v3
 }
 
-public class BModel {
+public class BModel implements Serializable {
     private String name;
     private String couleur;
     private String url;
