@@ -53,8 +53,10 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -318,6 +320,41 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
         //intitalization of FusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        System.out.println("TEST LOCATION : " + fusedLocationProviderClient);
+
+        //define callback of location request
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationAvailability(LocationAvailability locationAvailability) {
+                Log.d(TAG, "onLocationAvailability: isLocationAvailable =  " + locationAvailability.isLocationAvailable());
+            }
+
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Log.d(TAG, "onLocationResult: " + locationResult);
+                if (locationResult == null) {
+                    return;
+                }
+
+                //show location on map
+                switch (doAfterLocationSwitchedOn) {
+                    case 1:
+//                        startParsingAddressToShow();
+                        break;
+                    case 2:
+                        //on click of imgCurrent
+                        showCurrentLocationOnMap(false);
+                        break;
+                    case 3:
+                        //on Click of Direction Tool
+                        showCurrentLocationOnMap(true);
+                        break;
+                }
+
+                //Location fetched, update listener can be removed
+                fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+            }
+        };
 
         //Prepare for Request for current location
         getLocationRequest();
@@ -326,6 +363,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
 //        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
 //        //if you want to open the location on the LocationPickerActivity through intent
+
+
 
         Context ctx = getApplicationContext();
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -1135,6 +1174,17 @@ public class LocationPickerActivity extends AppCompatActivity implements
             Toast.makeText(LocationPickerActivity.this, "Location not Available", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if (userLocationRequest == null) {
+            getLocationRequest();
+        }
+
+        if (fusedLocationProviderClient == null) {
+            return;
+        }
+
+        System.out.println("A : "+userLocationRequest);
+        System.out.println("B : "+fusedLocationProviderClient);
 
         fusedLocationProviderClient.requestLocationUpdates(userLocationRequest,
                 locationCallback,
