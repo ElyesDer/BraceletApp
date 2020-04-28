@@ -9,91 +9,37 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.annotations.SerializedName;
+import com.squareup.picasso.Picasso;
 import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.Interfaces.RowType;
 import com.wildchild.locationpickermodule.locationpickermodule.ViewHolders.WatchViewHolderFactory;
 
 import java.io.Serializable;
 
-enum Versions {
-    @SerializedName("1")
-    v1,
-    @SerializedName("2")
-    v2,
-    @SerializedName("3")
-    v3
-}
 
 public class Bracelet implements RowType, Serializable {
 
     @SerializedName("_id")
     private String id_qr;
-    private String model;
-    private String couleur;
-    private String url;
+    private BModel model;
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-
-    public Versions getVersion() {
-        return version;
-    }
-
-    public void setVersion(Versions version) {
-        this.version = version;
-    }
-
-    private Versions version;
-    private ViewType viewType;
-
-    public Bracelet(String id_qr, String model, String couleur, ViewType viewType) {
-        this.id_qr = id_qr;
-        this.model = model;
-        this.couleur = couleur;
-        this.viewType = viewType;
-    }
-
-    public Bracelet(String id_qr, String model, String couleur) {
-        this.id_qr = id_qr;
-        this.model = model;
-        this.couleur = couleur;
-    }
-
-    public void setid_qr(String id_qr) {
-        this.id_qr = id_qr;
-    }
-
-    public void setmodel(String model) {
-        this.model = model;
-    }
-
-    public void setCouleur(String couleur) {
-        this.couleur = couleur;
-    }
-
-    public String getid_qr() {
+    public String getId_qr() {
         return id_qr;
     }
 
-    public String getmodel() {
+    public void setId_qr(String id_qr) {
+        this.id_qr = id_qr;
+    }
+
+    public BModel getModel() {
         return model;
     }
 
-    public String getCouleur() {
-        return couleur;
+    public void setModel(BModel model) {
+        this.model = model;
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return "Bracelet : ID " + getid_qr() + " Model : " + getmodel() + " VERSION : " + getVersion().name();
-    }
+    private ViewType viewType;
 
     @Override
     public int getItemViewType() {
@@ -118,34 +64,37 @@ public class Bracelet implements RowType, Serializable {
         switch (this.viewType) {
             case v1: {
                 WatchViewHolderFactory.WatchViewHolderV1 textViewHolder = (WatchViewHolderFactory.WatchViewHolderV1) viewHolder;
-                textViewHolder.textView.setText(this.model);
-                switch (version) {
-                    case v1: {
-                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v1));
-                        break;
-                    }
-                    case v2: {
-                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v3));
-                        break;
-                    }
-                }
+                textViewHolder.textView.setText(this.model.getName());
+
+                Picasso.get().load(this.model.getUrl()).into(textViewHolder.imageView);
+//                switch (this.model.getVersion()) {
+//                    case v1: {
+//                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v1));
+//                        break;
+//                    }
+//                    case v2: {
+//                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v3));
+//                        break;
+//                    }
+//                }
                 break;
             }
 
             case v2: {
                 WatchViewHolderFactory.WatchViewHolderV2 textViewHolder = (WatchViewHolderFactory.WatchViewHolderV2) viewHolder;
-                textViewHolder.textView.setText(this.model);
+                textViewHolder.textView.setText(this.model.getName());
+                Picasso.get().load(this.model.getUrl()).into(textViewHolder.imageView);
 
-                switch (version) {
-                    case v1: {
-                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v1));
-                        break;
-                    }
-                    case v2: {
-                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v3));
-                        break;
-                    }
-                }
+//                switch (this.model.getVersion()) {
+//                    case v1: {
+//                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v1));
+//                        break;
+//                    }
+//                    case v2: {
+//                        textViewHolder.imageView.setImageDrawable(textViewHolder.context.getDrawable(R.drawable.v3));
+//                        break;
+//                    }
+//                }
 
                 break;
             }

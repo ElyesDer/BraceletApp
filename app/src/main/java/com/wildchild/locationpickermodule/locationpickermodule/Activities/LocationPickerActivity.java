@@ -230,7 +230,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
         }
 
         if (currentBracelet != null) {
-            bottomSheetTitle.setText(currentBracelet.getmodel() != null ? currentBracelet.getmodel() : "No model name");
+            bottomSheetTitle.setText(currentBracelet.getModel() != null ? currentBracelet.getModel().getName() : "Bracelet");
         }
 
         if (savedInstanceState != null) {
@@ -578,7 +578,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     void fetchWatchHistoriesWithID(CompletionHandler<List<History>> completionHandler) {
         BraceletApiService apiService = RetrofitServiceProvider.getBraceletApiService();
-        apiService.getBraceletHistory(currentBracelet.getid_qr()).enqueue(new Callback<List<History>>() {
+        apiService.getBraceletHistory(currentBracelet.getId_qr()).enqueue(new Callback<List<History>>() {
             @Override
             public void onResponse(Call<List<History>> call, Response<List<History>> response) {
                 System.out.println("Response : " + response);

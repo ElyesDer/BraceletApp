@@ -38,8 +38,8 @@ public class ScanResultDialog extends AppCompatDialog {
 
         if (result != null) {
             // load image and bracelet model
-            Picasso.get().load(bracelet.getUrl()).into(((ImageView) findViewById(R.id.imageView4)));
-            ((TextView) findViewById(R.id.textView3)).setText(result.getmodel() + result.getVersion());
+            Picasso.get().load(bracelet.getModel().getUrl()).into(((ImageView) findViewById(R.id.imageView4)));
+            ((TextView) findViewById(R.id.textView3)).setText(result.getModel().getName() + result.getModel().getVersion());
         } else {
             // error requesting watch
             ((TextView) findViewById(R.id.result)).setText("Couldn't request bracelet from server. Please make sure you are connected to internet and retry");
@@ -86,7 +86,7 @@ public class ScanResultDialog extends AppCompatDialog {
 
     private void doPairBraceletWithUserID(String id, Bracelet bracelet, CompletionHandler<Boolean> completionHandler) {
         BraceletApiService apiService = RetrofitServiceProvider.getBraceletApiService();
-        apiService.pairDeviceWith(bracelet.getid_qr(), id).enqueue(new Callback<SResponse>() {
+        apiService.pairDeviceWith(bracelet.getId_qr(), id).enqueue(new Callback<SResponse>() {
             @Override
             public void onResponse(Call<SResponse> call, Response<SResponse> response) {
                 System.out.println("Response : " + response);
