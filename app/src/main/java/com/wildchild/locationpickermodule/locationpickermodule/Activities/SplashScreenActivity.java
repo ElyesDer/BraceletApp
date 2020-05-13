@@ -35,6 +35,8 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             if (userId.equals("0")) {
                 i = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                startActivity(i);
+                finish();
             } else {
                 // here we need to load Current User' Object , 2 reason => some info did change , two , to use User.currentUser
 
@@ -74,7 +76,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void loadCurrentUserWith(String id, CompletionHandler<User> completionHandler) {
-
+        System.out.println("LOAAAADING");
         UserApiService apiService = RetrofitServiceProvider.getUserApiService();
         apiService.getUser(id).enqueue(new Callback<User>() {
             @Override
@@ -85,8 +87,10 @@ public class SplashScreenActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                     completionHandler.onSuccess(response.body());
                 } else {
-                    // handle error or empty
 
+                    System.out.println("RETURNED FORM REQUEST");
+                    // handle error or empty
+                    completionHandler.onFailure(new Exception());
                 }
             }
 

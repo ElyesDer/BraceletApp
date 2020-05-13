@@ -1,6 +1,7 @@
 package com.wildchild.locationpickermodule.locationpickermodule.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -57,7 +58,9 @@ public class ScanResultDialog extends AppCompatDialog {
             doPairBraceletWithUserID(User.currentUser.getId(), this.bracelet, new CompletionHandler<Boolean>() {
                 @Override
                 public void onSuccess(Boolean response) {
-                    dismiss();
+                    Intent i = new Intent(getContext(), MainActivity.class);
+                    getContext().startActivity(i);
+                    //dismiss();
                 }
 
                 @Override
