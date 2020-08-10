@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_peek_height"
+        android:layout_height="85dp"
         android:background="@drawable/view_bottom_rounded_corner"
         android:paddingTop="8dp"
         android:paddingStart="16dp"
@@ -20,6 +20,12 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/bottomSheetTimer"
             android:orientation="vertical">
 
             <TextView
@@ -36,6 +42,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:textColor="?attr/metaTextColor"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
                 android:textSize="12sp" />
 
         </LinearLayout>

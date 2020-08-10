@@ -29,6 +29,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen_layout);
 
+        setTheme(R.style.DarkTheme);
+
         int TIME_OUT = 1000;
         new Handler().postDelayed(() -> {
             String userId = Prefs.with(this).read("user_id", "0");

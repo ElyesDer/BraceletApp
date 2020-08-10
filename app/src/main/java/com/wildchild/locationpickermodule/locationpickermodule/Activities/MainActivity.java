@@ -79,7 +79,6 @@ public class MainActivity extends Activity implements PopupMenu.OnMenuItemClickL
             public void onSuccess(List<Bracelet> response) {
                 bracelets = populateData(response);
 
-                System.out.println(response.get(0).toString());
                 adapter.updateData(bracelets);
             }
 

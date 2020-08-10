@@ -67,9 +67,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayout;
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior;
+import com.squareup.picasso.Picasso;
 import com.wildchild.locationpickermodule.BuildConfig;
 import com.wildchild.locationpickermodule.R;
 import com.wildchild.locationpickermodule.locationpickermodule.Adapters.HistoryAdapter;
@@ -180,6 +182,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
     private Polyline currentPolyLine;
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+    private FloatingActionButton floatingIcon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -214,6 +217,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
         bottomSheetTitle = (TextView) bottomSheetLayout.findViewById(R.id.bottom_sheet_title);
         bottomSheetTimer = (TextView) bottomSheetLayout.findViewById(R.id.bottomSheetTimer);
         bottomSheetSubTitle = (TextView) bottomSheetLayout.findViewById(R.id.bottomSheetSubTitle);
+//        floatingIcon = (FloatingActionButton) bottomSheetLayout.findViewById(R.id.floating_icon);
 
         bottomSheetHistoryList = (ListView) bottomSheetLayout.findViewById(R.id.history_list);
 
@@ -233,6 +237,8 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
         if (currentBracelet != null) {
             bottomSheetTitle.setText(currentBracelet.getModel() != null ? currentBracelet.getModel().getName() : "Bracelet");
+           // Picasso.get().load(currentBracelet.getModel().getUrl()).into(((ImageView) findViewById(R.id.imageView4)));
+
         }
 
         if (savedInstanceState != null) {
@@ -281,20 +287,12 @@ public class LocationPickerActivity extends AppCompatActivity implements
         });
 
         MergedAppBarLayoutBehavior mergedAppBarLayoutBehavior = MergedAppBarLayoutBehavior.from(mergedAppBarLayout);
-        mergedAppBarLayoutBehavior.setToolbarTitle("Title Dummy");
+        mergedAppBarLayoutBehavior.setToolbarTitle(this.currentBracelet.getModel().getName());
         mergedAppBarLayoutBehavior.setNavigationOnClickListener(v -> behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT));
-
-        int[] mDrawables = {
-                R.drawable.ic_search_black,
-                R.drawable.ic_search_black,
-                R.drawable.ic_search_black,
-                R.drawable.ic_search_black,
-                R.drawable.ic_search_black,
-        };
 
 
 // VIEW PAGER SETUP
-        WatchPagerAdapter adapter = new WatchPagerAdapter(this, mDrawables);
+        WatchPagerAdapter adapter = new WatchPagerAdapter(this, this.currentBracelet);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
 

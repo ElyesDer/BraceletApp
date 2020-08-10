@@ -28,7 +28,7 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="@dimen/anchor_point"
-        android:background="@color/colorAccent"
+        android:background="@color/blue_500"
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/BackDropBottomSheetBehavior">
         <TextView
@@ -52,7 +52,8 @@
             android:fitsSystemWindows="true" />
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/fab_margin"
@@ -61,10 +62,10 @@
         android:layout_marginBottom="@dimen/fab_margin"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/googleg_standard_color_18"
+        android:src="@drawable/ic_my_location_black"
         app:layout_anchor="@id/bottom_sheet"
         app:layout_anchorGravity="top|right|end"
-        app:layout_behavior="@string/ScrollAwareFABBehavior" />
+        app:layout_behavior="@string/ScrollAwareFABBehavior" />-->
 
     <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
         android:id="@+id/mergedappbarlayout"
